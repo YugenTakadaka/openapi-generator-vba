@@ -1,0 +1,79 @@
+name: Codex implementation task
+description: Create a scoped implementation task for the PR-driven Codex queue.
+title: "[Codex] "
+labels: ["codex"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This Issue is an implementation unit. Keep one cohesive feature slice per Issue.
+        `AGENTS.md`, `SPEC.md`, `COMPATIBILITY.md`, and `ROADMAP.md` remain repository-level authorities.
+
+  - type: input
+    id: queue_order
+    attributes:
+      label: Queue Order
+      description: Numeric execution order, for example 10, 20, 30.
+      placeholder: "10"
+    validations:
+      required: true
+
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+      description: What outcome should this task produce?
+    validations:
+      required: true
+
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: Which earlier roadmap task or decision must be complete first? Write "none" if independent.
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      description: Concrete implementation responsibilities owned by this Issue.
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance Criteria
+      description: Observable, testable completion criteria.
+      placeholder: |
+        - [ ] Criterion 1
+        - [ ] Criterion 2
+    validations:
+      required: true
+
+  - type: textarea
+    id: tests
+    attributes:
+      label: Required Tests / Fixtures
+      description: Fixtures and automated checks expected for this task.
+    validations:
+      required: true
+
+  - type: textarea
+    id: out_of_scope
+    attributes:
+      label: Out of Scope
+      description: Adjacent work that must not be pulled into this Issue.
+    validations:
+      required: true
+
+  - type: textarea
+    id: human_decisions
+    attributes:
+      label: Human Decisions Already Made
+      description: Record relevant explicit design decisions. Leave "none" if there are none.
+      placeholder: none
+    validations:
+      required: true

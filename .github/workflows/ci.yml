@@ -3,30 +3,49 @@ name: CI
 on:
   pull_request:
   push:
-    branches: [main]
+    branches:
+      - main
+  workflow_dispatch:
 
 permissions:
   contents: read
 
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  test:
+  verify:
+    name: Maven Verify
     runs-on: ubuntu-latest
+    timeout-minutes: 20
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: "17"
           cache: maven
-      - name: Test
+
+      - name: Show tool versions
+        run: |
+          java -version
+          mvn -version
+
+      - name: Verify
         run: mvn --batch-mode --no-transfer-progress verify
-      - name: Build generator
-        run: mvn --batch-mode --no-transfer-progress package -DskipTests
-      - name: Smoke-generate fixture
+
+      - name: Generate minimal fixture when generator JAR exists
         shell: bash
         run: |
-          chmod +x scripts/generate-example.sh
-          ./scripts/generate-example.sh examples/fixtures/minimal.yaml target/generated-smoke
-      - name: Show generated files
-        if: always()
-        run: find target/generated-smoke -type f -maxdepth 5 -print 2>/dev/null || true
+          set -euo pipefail
+          if [[ -x scripts/generate-example.sh ]]; then
+            scripts/generate-example.sh
+          else
+            echo "generate-example.sh is not executable; running with bash"
+            bash scripts/generate-example.sh
+          fi

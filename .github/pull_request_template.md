@@ -1,35 +1,59 @@
+## Issue
+
+Closes #
+
 ## Purpose
-<!-- What single problem does this PR solve? -->
+
+<!-- Why is this change needed? -->
 
 ## Scope
-<!-- Explicitly list what is included. -->
+
+<!-- What is intentionally implemented in this PR? -->
 
 ## Implementation
-<!-- Key design/implementation decisions. -->
+
+<!-- Summarize the design and important files changed. -->
+
+## Acceptance Criteria
+
+- [ ] Every acceptance criterion in the referenced Issue is satisfied or explicitly documented as not satisfied.
 
 ## Tests
+
 - [ ] `mvn verify`
-- [ ] Representative OpenAPI fixture generated
-- [ ] Generated VBA inspected
-- [ ] New behavior has fixture + automated assertions
+- [ ] OpenAPI fixture added/updated where applicable
+- [ ] Generated VBA inspected/verified
+- [ ] Feature-specific tests executed where applicable
 
-## Compatibility changes
-<!-- Exact COMPATIBILITY.md rows changed, or "None". -->
+Commands/results:
 
-## Known limitations
-<!-- Known limitations of this implementation. -->
+```text
+<commands and concise results>
+```
 
-## Out of scope
-<!-- Related work intentionally NOT included. -->
+## Compatibility
 
-## Suggested next PR
-<!-- One logical follow-up. -->
+- [ ] `COMPATIBILITY.md` updated if demonstrated support changed
+- [ ] No unsupported feature is claimed as supported
 
-## PR-driven checklist
-- [ ] I read AGENTS.md, SPEC.md, COMPATIBILITY.md, and ROADMAP.md.
-- [ ] This PR covers one roadmap item or one tightly related feature group.
-- [ ] Generated files were not hand-patched as the primary fix.
-- [ ] COMPATIBILITY.md claims are backed by tests.
-- [ ] User-facing documentation was updated if behavior changed.
-- [ ] No unrelated refactoring/features were added.
-- [ ] This PR is ready for independent review.
+Compatibility changes:
+
+<!-- None, or describe them. -->
+
+## Scope Guard
+
+- [ ] No unrelated roadmap functionality is included
+- [ ] Generated output was not manually patched as the primary fix
+- [ ] `SPEC.md` was changed only if the Issue explicitly authorized it
+
+## Known Limitations
+
+<!-- None, or list limitations. -->
+
+## Human Decisions
+
+<!-- None, or describe decisions/approvals required before merge. -->
+
+## Out of Scope
+
+<!-- Explicitly list adjacent work intentionally deferred. -->

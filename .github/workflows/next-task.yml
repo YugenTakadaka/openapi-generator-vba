@@ -1,0 +1,71 @@
+name: Advance Codex Queue
+
+on:
+  pull_request:
+    types: [closed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: read
+
+concurrency:
+  group: codex-roadmap-queue
+  cancel-in-progress: false
+
+jobs:
+  advance:
+    name: Promote next Codex task
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Promote next blocked task when no ready task exists
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+
+            const issues = await github.paginate(github.rest.issues.listForRepo, {
+              owner,
+              repo,
+              state: 'open',
+              labels: 'codex',
+              per_page: 100,
+            });
+
+            const onlyIssues = issues.filter(item => !item.pull_request);
+            const has = (issue, label) => issue.labels.some(x => (typeof x === 'string' ? x : x.name) === label);
+
+            const ready = onlyIssues.filter(issue => has(issue, 'ready'));
+            if (ready.length > 1) {
+              core.setFailed(`Queue invariant violated: ${ready.length} open codex+ready issues exist.`);
+              return;
+            }
+            if (ready.length === 1) {
+              core.info(`Queue already has ready issue #${ready[0].number}; no promotion needed.`);
+              return;
+            }
+
+            const parseOrder = issue => {
+              const match = (issue.body || '').match(/^Queue-Order:\s*(\d+)\s*$/mi);
+              return match ? Number(match[1]) : Number.POSITIVE_INFINITY;
+            };
+
+            const blocked = onlyIssues
+              .filter(issue => has(issue, 'blocked') && !has(issue, 'needs-human'))
+              .map(issue => ({ issue, order: parseOrder(issue) }))
+              .filter(x => Number.isFinite(x.order))
+              .sort((a, b) => a.order - b.order || a.issue.number - b.issue.number);
+
+            if (blocked.length === 0) {
+              core.info('No promotable codex+blocked issue found. Queue may be complete.');
+              return;
+            }
+
+            const next = blocked[0].issue;
+            await github.rest.issues.removeLabel({ owner, repo, issue_number: next.number, name: 'blocked' });
+            await github.rest.issues.addLabels({ owner, repo, issue_number: next.number, labels: ['ready'] });
+            core.notice(`Promoted issue #${next.number} to codex+ready.`);
