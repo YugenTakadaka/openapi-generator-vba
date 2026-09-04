@@ -14,6 +14,7 @@ import java.util.ServiceLoader;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class VbaClientCodegenTest {
@@ -40,9 +41,10 @@ class VbaClientCodegenTest {
         String model = Files.readString(output.resolve("Models/User.cls"));
         assertTrue(api.contains("Attribute VB_Name = \"UsersApi\""));
         assertTrue(api.contains("Option Explicit"));
-        assertTrue(api.contains("Public Function getUser(ByVal id As String) As User"));
+        assertTrue(api.contains("Public Function getUser(ByVal id As String) As Object"));
         assertTrue(api.contains("Set response = m_Client.Invoke(\"GET\", path, bodyText)"));
-        assertTrue(api.contains("Set getUser = m_Client.DeserializeObject(response.Body, \"User\")"));
+        assertTrue(api.contains("Set getUser = m_Client.DeserializeObject(response.Body)"));
+        assertFalse(api.contains("As User"), "Typed model responses must not be generated before hydration exists");
         assertTrue(model.contains("Attribute VB_Name = \"User\""));
         assertTrue(model.contains("Option Explicit"));
         assertTrue(model.contains("Public Property Get id() As String"));

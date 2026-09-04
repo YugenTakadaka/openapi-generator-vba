@@ -43,7 +43,7 @@ Public Function {{operationId}}({{#allParams}}ByVal {{paramName}} As {{dataType}
     {{operationId}} = m_Client.DeserializePrimitive(response.Body, "{{returnType}}")
 {{/returnTypeIsPrimitive}}
 {{^returnTypeIsPrimitive}}
-    Set {{operationId}} = m_Client.DeserializeObject(response.Body, "{{returnType}}")
+    Set {{operationId}} = m_Client.DeserializeObject(response.Body)
 {{/returnTypeIsPrimitive}}
 {{/isArray}}
 {{/returnType}}

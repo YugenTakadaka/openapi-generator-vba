@@ -52,7 +52,7 @@ MissingJson:
     Err.Raise vbObjectError + 1701, "ApiClient.Serialize", "JsonConverter (VBA-JSON) is required for request-body serialization."
 End Function
 
-Public Function DeserializeObject(ByVal json As String, ByVal typeName As String) As Object
+Public Function DeserializeObject(ByVal json As String) As Object
     On Error GoTo MissingJson
     Set DeserializeObject = JsonConverter.ParseJson(json)
     Exit Function

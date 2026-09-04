@@ -3,15 +3,19 @@ package com.master.openapi.vba;
 import io.swagger.v3.oas.models.media.Schema;
 import org.openapitools.codegen.CodegenConfig;
 import org.openapitools.codegen.CodegenModel;
+import org.openapitools.codegen.CodegenOperation;
 import org.openapitools.codegen.CodegenProperty;
 import org.openapitools.codegen.CodegenType;
 import org.openapitools.codegen.DefaultCodegen;
 import org.openapitools.codegen.SupportingFile;
 import org.openapitools.codegen.meta.GeneratorMetadata;
 import org.openapitools.codegen.meta.Stability;
+import org.openapitools.codegen.model.ModelMap;
+import org.openapitools.codegen.model.OperationsMap;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.List;
 
 import static org.openapitools.codegen.utils.CamelizeOption.LOWERCASE_FIRST_LETTER;
 import static org.openapitools.codegen.utils.StringUtils.camelize;
@@ -107,6 +111,20 @@ public class VbaClientCodegen extends DefaultCodegen implements CodegenConfig {
                 "x-vba-is-object",
                 !languageSpecificPrimitives.contains(property.dataType) || "Variant".equals(property.dataType)
         );
+    }
+
+    @Override
+    public OperationsMap postProcessOperationsWithModels(OperationsMap operations, List<ModelMap> allModels) {
+        OperationsMap processedOperations = super.postProcessOperationsWithModels(operations, allModels);
+        for (CodegenOperation operation : processedOperations.getOperations().getOperation()) {
+            if (operation.returnType != null && !operation.isArray && !operation.returnTypeIsPrimitive) {
+                // Typed JSON hydration is not implemented yet. Expose ParseJson's object boundary
+                // instead of promising a generated model instance that the runtime cannot return.
+                operation.returnType = "Object";
+                operation.returnBaseType = "Object";
+            }
+        }
+        return processedOperations;
     }
 
     @Override
