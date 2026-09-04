@@ -1,0 +1,26 @@
+openapi: 3.0.3
+info: {title: Mini API, version: 1.0.0}
+servers: [{url: https://example.test}]
+paths:
+  /users/{id}:
+    get:
+      tags: [users]
+      operationId: getUser
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+        - {name: verbose, in: query, required: false, schema: {type: boolean}}
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/User'}
+components:
+  schemas:
+    User:
+      type: object
+      required: [id, name]
+      properties:
+        id: {type: string}
+        name: {type: string}
+        active: {type: boolean}

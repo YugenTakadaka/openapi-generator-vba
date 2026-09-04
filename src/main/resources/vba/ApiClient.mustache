@@ -1,0 +1,73 @@
+VERSION 1.0 CLASS
+BEGIN
+  MultiUse = -1  'True
+END
+Attribute VB_Name = "ApiClient"
+Option Explicit
+
+Private m_BaseUrl As String
+Private m_BearerToken As String
+
+Public Property Let BaseUrl(ByVal value As String): m_BaseUrl = value: End Property
+Public Property Get BaseUrl() As String: BaseUrl = m_BaseUrl: End Property
+Public Property Let BearerToken(ByVal value As String): m_BearerToken = value: End Property
+
+Public Function Invoke(ByVal method As String, ByVal path As String, Optional ByVal body As String = "") As ApiResponse
+    Dim http As Object: Set http = CreateObject("WinHttp.WinHttpRequest.5.1")
+    http.Open method, m_BaseUrl & path, False
+    http.SetRequestHeader "Accept", "application/json"
+    If Len(m_BearerToken) > 0 Then http.SetRequestHeader "Authorization", "Bearer " & m_BearerToken
+    If Len(body) > 0 Then http.SetRequestHeader "Content-Type", "application/json"
+    If Len(body) > 0 Then http.Send body Else http.Send
+    Dim r As New ApiResponse
+    r.StatusCode = http.Status: r.StatusText = http.StatusText: r.Body = http.ResponseText: r.Headers = http.GetAllResponseHeaders
+    If r.StatusCode < 200 Or r.StatusCode >= 300 Then Err.Raise vbObjectError + 1700, "ApiClient", "HTTP " & CStr(r.StatusCode) & ": " & r.Body
+    Set Invoke = r
+End Function
+
+Public Function UrlEncode(ByVal value As String) As String
+    Dim i As Long, c As String, n As Long, out As String
+    For i = 1 To Len(value)
+        c = Mid$(value, i, 1): n = AscW(c)
+        If (n >= 48 And n <= 57) Or (n >= 65 And n <= 90) Or (n >= 97 And n <= 122) Or c = "-" Or c = "." Or c = "_" Or c = "~" Then out = out & c Else out = out & "%" & Right$("0" & Hex$(n And &HFF&), 2)
+    Next
+    UrlEncode = out
+End Function
+
+Public Function AddQueryParameter(ByVal path As String, ByVal name As String, ByVal value As Variant) As String
+    If IsMissingValue(value) Then AddQueryParameter = path: Exit Function
+    AddQueryParameter = path & IIf(InStr(path, "?") > 0, "&", "?") & UrlEncode(name) & "=" & UrlEncode(CStr(value))
+End Function
+
+Private Function IsMissingValue(ByVal value As Variant) As Boolean
+    IsMissingValue = IsNull(value) Or IsEmpty(value)
+End Function
+
+' JSON hooks. Wire these to VBA-JSON (JsonConverter) or your preferred serializer.
+Public Function Serialize(ByVal value As Variant) As String
+    On Error GoTo MissingJson
+    Serialize = JsonConverter.ConvertToJson(value)
+    Exit Function
+MissingJson:
+    Err.Raise vbObjectError + 1701, "ApiClient.Serialize", "JsonConverter (VBA-JSON) is required for request-body serialization."
+End Function
+
+Public Function DeserializeObject(ByVal json As String, ByVal typeName As String) As Object
+    On Error GoTo MissingJson
+    Set DeserializeObject = JsonConverter.ParseJson(json)
+    Exit Function
+MissingJson:
+    Err.Raise vbObjectError + 1702, "ApiClient.DeserializeObject", "JsonConverter (VBA-JSON) is required. Generated models are DTO shells; typed JSON hydration is the next extension point."
+End Function
+
+Public Function DeserializeCollection(ByVal json As String) As Collection
+    On Error GoTo MissingJson
+    Set DeserializeCollection = JsonConverter.ParseJson(json)
+    Exit Function
+MissingJson:
+    Err.Raise vbObjectError + 1703, "ApiClient.DeserializeCollection", "JsonConverter (VBA-JSON) is required."
+End Function
+
+Public Function DeserializePrimitive(ByVal json As String, ByVal typeName As String) As Variant
+    DeserializePrimitive = json
+End Function

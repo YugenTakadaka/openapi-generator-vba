@@ -1,0 +1,52 @@
+VERSION 1.0 CLASS
+BEGIN
+  MultiUse = -1  'True
+END
+Attribute VB_Name = "{{classname}}"
+Option Explicit
+
+Private m_Client As ApiClient
+
+Public Property Set Client(ByVal value As ApiClient)
+    Set m_Client = value
+End Property
+
+Public Property Get Client() As ApiClient
+    Set Client = m_Client
+End Property
+
+{{#operations}}{{#operation}}
+Public Function {{operationId}}({{#allParams}}ByVal {{paramName}} As {{dataType}}{{^-last}}, {{/-last}}{{/allParams}}) As {{#returnType}}{{returnType}}{{/returnType}}{{^returnType}}Variant{{/returnType}}
+    Dim path As String
+    path = "{{{path}}}"
+{{#pathParams}}
+    path = Replace(path, "{{=<% %>=}}{<%baseName%>}<%={{ }}=%>", m_Client.UrlEncode(CStr({{paramName}})))
+{{/pathParams}}
+{{#queryParams}}
+    path = m_Client.AddQueryParameter(path, "{{baseName}}", {{paramName}})
+{{/queryParams}}
+
+    Dim bodyText As String
+    bodyText = ""
+{{#bodyParams}}
+    bodyText = m_Client.Serialize({{paramName}})
+{{/bodyParams}}
+
+    Dim response As ApiResponse
+    Set response = m_Client.Invoke("{{httpMethod}}", path, bodyText)
+{{#returnType}}
+{{#isArray}}
+    Set {{operationId}} = m_Client.DeserializeCollection(response.Body)
+{{/isArray}}
+{{^isArray}}
+{{#returnTypeIsPrimitive}}
+    {{operationId}} = m_Client.DeserializePrimitive(response.Body, "{{returnType}}")
+{{/returnTypeIsPrimitive}}
+{{^returnTypeIsPrimitive}}
+    Set {{operationId}} = m_Client.DeserializeObject(response.Body, "{{returnType}}")
+{{/returnTypeIsPrimitive}}
+{{/isArray}}
+{{/returnType}}
+End Function
+
+{{/operation}}{{/operations}}

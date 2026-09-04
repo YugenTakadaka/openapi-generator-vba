@@ -1,0 +1,31 @@
+openapi: 3.0.3
+info:
+  title: Minimal VBA Generator Fixture
+  version: 1.0.0
+servers:
+  - url: https://example.test
+paths:
+  /users/{id}:
+    get:
+      tags: [Users]
+      operationId: getUser
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: User
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+components:
+  schemas:
+    User:
+      type: object
+      required: [id, name]
+      properties:
+        id: { type: string }
+        name: { type: string }

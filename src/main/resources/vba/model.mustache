@@ -1,0 +1,32 @@
+VERSION 1.0 CLASS
+BEGIN
+  MultiUse = -1  'True
+END
+Attribute VB_Name = "{{classname}}"
+Option Explicit
+
+{{#vars}}
+Private m_{{name}} As {{dataType}}
+{{/vars}}
+
+{{#vars}}
+{{#isPrimitiveType}}
+Public Property Get {{name}}() As {{dataType}}
+    {{name}} = m_{{name}}
+End Property
+
+Public Property Let {{name}}(ByVal value As {{dataType}})
+    m_{{name}} = value
+End Property
+{{/isPrimitiveType}}
+{{^isPrimitiveType}}
+Public Property Get {{name}}() As {{dataType}}
+    Set {{name}} = m_{{name}}
+End Property
+
+Public Property Set {{name}}(ByVal value As {{dataType}})
+    Set m_{{name}} = value
+End Property
+{{/isPrimitiveType}}
+
+{{/vars}}

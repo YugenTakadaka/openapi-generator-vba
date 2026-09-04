@@ -1,0 +1,1 @@
+Read the repository guidance first. Implement Roadmap Phase 3 only: typed model properties plus model <-> Dictionary conversion, including nested models and collections. Keep JSON-engine specifics behind Runtime/serializer boundaries. Add fixtures/tests. Do not broaden into HTTP parameter/authentication work.
