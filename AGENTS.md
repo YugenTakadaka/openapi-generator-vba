@@ -289,11 +289,96 @@ Codex review may recommend or request changes, but only a human may provide the 
 
 ## Code Review Rules
 
-- Read and follow `codex/prompts/REVIEW.md`.
-- Review the PR against the GitHub Issue referenced by the PR.
-- Verify the implementation does notexceed the Issue scope.
-- Verify generated VBA semantics, especially object/scalar assignment.
-- Verify that COMPATIBILITY.md claims only behvior demonstrated by tests.
+When reviewing a Pull Request:
+
+1. Read `codex/prompts/REVIEW.md`.
+2. Read the GitHub Issue referenced by the Pull Request.
+3. Treat the Issue acceptance criteria as the authoritative scope.
+4. Read `SPEC.md`.
+5. Read `COMPATIBILITY.md`.
+6. Read the complete Pull Request diff.
+
+Review the Pull Request independently from the implementation agent.
+
+Do not assume that the implementation agent's summary is correct.
+
+### Required Review Areas
+
+Check:
+
+- correctness against the referenced Issue
+- compliance with `SPEC.md`
+- scope creep
+- OpenAPI Generator API compatibility with the version pinned in `pom.xml`
+- VBA syntax correctness
+- object assignment using `Set`
+- scalar assignment without `Set`
+- reserved identifier handling
+- nullable semantics
+- 32-bit and 64-bit Office compatibility where relevant
+- deterministic generated output
+- Runtime/API/Model responsibility boundaries
+- HTTP error preservation
+- test coverage
+- fixture coverage
+- generated VBA assertions
+- accuracy of `COMPATIBILITY.md`
+
+### Generated Code
+
+Do not accept manual fixes to generated VBA as the primary implementation.
+
+The fix must normally be made in:
+
+- `VbaClientCodegen`
+- Mustache templates
+- Runtime templates
+- generator configuration
+
+as appropriate.
+
+### Tests
+
+Verify that:
+
+- `mvn verify` passes
+- relevant OpenAPI fixtures exist
+- tests exercise production generator paths
+- generated VBA is asserted where appropriate
+
+A test passing is not sufficient if the test encodes behavior that conflicts with `SPEC.md`.
+
+### Findings
+
+Classify findings as:
+
+- Blocker
+- Major
+- Minor
+- Nit
+
+For every Blocker, Major, or Minor finding, report:
+
+- affected file
+- affected location
+- problem
+- why it matters
+- smallest reasonable fix
+
+### Scope
+
+Report functionality implemented outside the referenced Issue as scope creep.
+
+Do not request unrelated future-roadmap work in the current PR.
+Record such work as a follow-up instead.
+
+### Merge
+
+The review agent MUST NOT merge the Pull Request.
+
+The review agent MUST NOT enable auto-merge.
+
+Human approval is required before merge.
 
 ## Merge and queue advancement
 
