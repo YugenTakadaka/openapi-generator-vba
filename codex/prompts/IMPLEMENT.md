@@ -85,22 +85,23 @@ Mark/report `needs-human` when the integration supports Issue updates, and stop 
 
 ## Completion
 
-Create a Pull Request that references the assigned Issue using:
+When implementation is complete:
 
-```text
-Closes #<issue-number>
-```
+1. Run all required tests.
+2. Run `mvn verify`.
+3. Inspect representative generated VBA.
+4. Update documentation required by the Issue.
+5. Create a Pull Request referencing the Issue using:
 
-The PR description must include:
+   Closes #<issue-number>
 
-- implementation summary;
-- files changed;
-- acceptance-criteria status;
-- tests added;
-- tests executed and results;
-- compatibility changes;
-- known limitations;
-- human decisions, if any;
-- out-of-scope items deliberately not implemented.
+6. Ensure the Pull Request is ready for review.
 
-Do not approve or merge the Pull Request.
+Do not leave the Pull Request as Draft after all required implementation
+and validation work is complete.
+
+Do not approve the Pull Request.
+
+Do not merge the Pull Request.
+
+Do not enable auto-merge.
