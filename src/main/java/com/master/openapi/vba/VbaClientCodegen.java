@@ -109,7 +109,11 @@ public class VbaClientCodegen extends DefaultCodegen implements CodegenConfig {
         super.postProcessModelProperty(model, property);
         property.vendorExtensions.put(
                 "x-vba-is-object",
-                !languageSpecificPrimitives.contains(property.dataType) || "Variant".equals(property.dataType)
+                property.isModel
+                        || property.isContainer
+                        || property.isMap
+                        || property.isFreeFormObject
+                        || property.isAnyType
         );
     }
 

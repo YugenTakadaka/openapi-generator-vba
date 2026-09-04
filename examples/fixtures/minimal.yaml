@@ -29,3 +29,4 @@ components:
       properties:
         id: { type: string }
         name: { type: string }
+        revision: { type: integer, format: int64 }

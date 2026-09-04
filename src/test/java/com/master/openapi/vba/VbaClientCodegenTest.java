@@ -49,6 +49,9 @@ class VbaClientCodegenTest {
         assertTrue(model.contains("Option Explicit"));
         assertTrue(model.contains("Public Property Get id() As String"));
         assertTrue(model.contains("Public Property Let name(ByVal value As String)"));
+        assertTrue(model.contains("Public Property Get revision() As Variant\n    revision = m_revision"));
+        assertTrue(model.contains("Public Property Let revision(ByVal value As Variant)\n    m_revision = value"));
+        assertFalse(model.contains("Property Set revision"), "Scalar int64 Variants must not use object assignment");
     }
 
     @Test
