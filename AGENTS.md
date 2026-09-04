@@ -280,18 +280,20 @@ Examples likely to require explicit design decisions include ambiguous `oneOf`/`
 ## Review protocol
 
 Review is independent from implementation.
-The reviewer must read and follow `codex/prompts/REVIEW.md`.
-The reviewer must read the PR, and its referenced Issue.
-
-The reviewer must review the PR against the GitHub Issue referenced by the PR.
+The reviewer must read `codex/prompts/REVIEW.md`, the PR, and its referenced Issue.
 
 Review must check both code correctness and Issue-scope correctness.
 Tests that encode behavior contrary to `SPEC.md` are not sufficient evidence.
-The reviewer must verify the implementation does notexceed the Issue scope.
-The reviewer must verify generated VBA semantics, especially object/scalar assignment.
-The reviewer must verify that COMPATIBILITY.md claims only behvior demonstrated by tests.
 
 Codex review may recommend or request changes, but only a human may provide the final merge decision for roadmap implementation PRs.
+
+## Code Review Rules
+
+- Read and follow `codex/prompts/REVIEW.md`.
+- Review the PR against the GitHub Issue referenced by the PR.
+- Verify the implementation does notexceed the Issue scope.
+- Verify generated VBA semantics, especially object/scalar assignment.
+- Verify that COMPATIBILITY.md claims only behvior demonstrated by tests.
 
 ## Merge and queue advancement
 
