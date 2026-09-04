@@ -1,3 +1,5 @@
+{{#models}}
+{{#model}}
 VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
@@ -10,7 +12,7 @@ Private m_{{name}} As {{dataType}}
 {{/vars}}
 
 {{#vars}}
-{{#isPrimitiveType}}
+{{^vendorExtensions.x-vba-is-object}}
 Public Property Get {{name}}() As {{dataType}}
     {{name}} = m_{{name}}
 End Property
@@ -18,8 +20,8 @@ End Property
 Public Property Let {{name}}(ByVal value As {{dataType}})
     m_{{name}} = value
 End Property
-{{/isPrimitiveType}}
-{{^isPrimitiveType}}
+{{/vendorExtensions.x-vba-is-object}}
+{{#vendorExtensions.x-vba-is-object}}
 Public Property Get {{name}}() As {{dataType}}
     Set {{name}} = m_{{name}}
 End Property
@@ -27,6 +29,9 @@ End Property
 Public Property Set {{name}}(ByVal value As {{dataType}})
     Set m_{{name}} = value
 End Property
-{{/isPrimitiveType}}
+{{/vendorExtensions.x-vba-is-object}}
 
 {{/vars}}
+
+{{/model}}
+{{/models}}
